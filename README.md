@@ -39,6 +39,7 @@ Frontend Test Suite: Run npm test inside /frontend-service
 
 The backend adopts a **Layered Domain-Driven Architecture (Routes -> Controllers -> Model Statics)** running on Node.js, Express, and MongoDB.
 
+```
 backend-service/
 ├── src/
 │   ├── config/             # Database connection & Swagger OpenAPI specs
@@ -51,6 +52,7 @@ backend-service/
 │   ├── app.js              # Express app initialization & static asset mounting
 │   └── server.js           # Server bootstrap & process lifecycle handlers
 └── tests/                  # API integration and unit test suites
+```
 
 #### Why you chose the approach
 ##### Clear Separation of Concerns: Thin routes define declarative endpoints and RBAC guards, controllers orchestrate business logic, and Mongoose static methods handle heavy database aggregations without mixing concerns.
@@ -67,7 +69,7 @@ backend-service/
 ## Frontend Architecture
 
 The frontend is built on **Next.js (App Router)** and **TypeScript**, structured around a **Master-Detail Workspace Pattern** to minimize context switching.
-
+```
 frontend-service/
 ├── src/
 │   ├── app/                # Next.js App Router routes (dockets, customers, auth)
@@ -82,6 +84,7 @@ frontend-service/
 │   ├── hooks/              # Custom hooks (useDebounce, pagination state)
 │   ├── lib/                # Configured API client (fetchClient with auto-JWT)
 │   └── types/              # Domain TypeScript interfaces
+```
 ---
 #### Why you chose the approach
 ##### Master-Detail Workspace Pattern: Utilizes a high-density split-pane layout to let caseworkers navigate docket queues on the left while managing stage transitions, checklists, and audit history on the right without full-page reloads or context switching.
