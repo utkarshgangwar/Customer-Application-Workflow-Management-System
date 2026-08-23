@@ -1,9 +1,12 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import React from "react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import SearchBar from "@/components/SearchBar";
 
 describe("SearchBar Component", () => {
-  it("fires onChange callback when typing query", () => {
+  it("renders with placeholder and fires onChange callback when typing", async () => {
     const handleChange = jest.fn();
+
     render(
       <SearchBar
         value=""
@@ -13,8 +16,28 @@ describe("SearchBar Component", () => {
     );
 
     const input = screen.getByPlaceholderText("Search applicants...");
+    expect(input).toBeInTheDocument();
+
     fireEvent.change(input, { target: { value: "Canada" } });
 
-    expect(handleChange).toHaveBeenCalledWith("Canada");
+    // Handles both direct triggers and debounced updates
+    await waitFor(() => {
+      expect(handleChange).toHaveBeenCalledWith("Canada");
+    });
+  });
+
+  it("renders with the provided initial value", () => {
+    render(
+      <SearchBar
+        value="Express Entry"
+        placeholder="Search applicants..."
+        onChange={jest.fn()}
+      />,
+    );
+
+    const input = screen.getByPlaceholderText(
+      "Search applicants...",
+    ) as HTMLInputElement;
+    expect(input.value).toBe("Express Entry");
   });
 });
