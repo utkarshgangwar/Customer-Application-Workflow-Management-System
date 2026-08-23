@@ -1,0 +1,6 @@
+/backend-service/node_modules
+/backend-service/.env
+/backend-service/uploads
+
+/frontend-service/node_modules
+/frontend-service/.env.local
