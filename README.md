@@ -97,7 +97,7 @@ frontend-service/
 
 ##### Optimistic Local Interactivity: Custom utilities (e.g., useDebounce) prevent API request thrashing during search, while task checklist toggling and direct file-to-task uploads provide immediate visual feedback.
 
-#### Data Model
+## Data Model
 Model Alignment Verification
 Looking at your diagram, the data model aligns with the backend:
 
@@ -129,7 +129,7 @@ Activity: Append-only event store capturing immutable audit records (actor, acti
 SyncJob: Persistent outbox queue tracking external system dispatch attempts, exponential backoff retries, error logs, and idempotency keys.
 
 
-#### Application Design
+## Application Design
 Communication Pattern: The Next.js frontend communicates with the Express backend via a typed RESTful API client over HTTP/JSON with cookie-based JWT sessions.
 
 State Management: The frontend leverages local React state for UI interactivity (split-pane selection, modal workflows) and synchronizes with backend state through optimistic updates and debounced queries.
@@ -139,7 +139,7 @@ Workflow Enforcement: Stage advancement is governed by a server-side state machi
 Concurrency Control: Updates include the application's version field. The backend checks for version matches before writing to prevent accidental overwrites when multiple users review the same record.
 
 
-#### Authentication and Authorization
+## Authentication and Authorization
 Authentication: Stateless authentication utilizing JSON Web Tokens (JWT) signed with HMAC-SHA256, issued upon login, and stored in secure HTTP-only cookies.
 
 Role-Based Access Control (RBAC):
@@ -153,7 +153,7 @@ Executive: Processing access limited to view and complete work items, attach fil
 Domain Scoping: Workflow assignments dynamically filter caseworker dropdowns to staff belonging to that workflow's operational team.
 
 
-#### External Integration
+## External Integration
 Execution Point: Synchronization dispatches asynchronously when an application transitions into its terminal COMPLETED stage.
 
 Non-Blocking Fault Isolation: The external sync runs in an isolated try-catch block; external latency or network failures never fail the internal database transaction.
@@ -163,7 +163,7 @@ Idempotency & Retry Mechanism: Each sync creates a SyncJob record with a determi
 Production Evolution: For high-throughput production, the persistent SyncJob table would be backed by a distributed message broker (e.g., Redis BullMQ, RabbitMQ, or Kafka) with dedicated worker processes and Dead-Letter Queue (DLQ) alerts.
 
 
-#### Assumptions and Trade-offs
+## Assumptions and Trade-offs
 File Storage (Local vs. Cloud): Multipart file uploads are stored on the local disk (/uploads) and served statically for simplicity. A production deployment would stream files directly to Amazon S3 or Google Cloud Storage using presigned URLs.
 
 Queue Processing (In-Memory/DB Outbox vs. Dedicated Broker): Background sync retries are tracked inside MongoDB rather than a standalone Redis instance to keep dependencies minimal and self-contained.
@@ -171,13 +171,13 @@ Queue Processing (In-Memory/DB Outbox vs. Dedicated Broker): Background sync ret
 Soft Deletes vs. State Invalidation: Applications are not permanently deleted; instead, they transition to CANCELLED status to preserve audit integrity and historical activity logs.
 
 
-#### Incomplete Features
+## Incomplete Features
 Real-Time Push Notifications: Live multi-user updates currently rely on periodic re-fetching and optimistic state refreshes rather than active WebSockets (Socket.io).
 
 Granular Field-Level Audit Diffing: The Activity collection logs high-level action messages rather than deep JSON object deltas (before/after snapshots) for each individual customer field.
 
 
-#### Production Considerations
+## Production Considerations
 Infrastructure & Storage: Migrate local file persistence to S3/GCS with private bucket access policies and presigned temporary upload/download links.
 
 Distributed Queueing: Offload SyncJob execution to a dedicated message broker (e.g., BullMQ with Redis) to ensure horizontal scalability across multiple backend server instances.
