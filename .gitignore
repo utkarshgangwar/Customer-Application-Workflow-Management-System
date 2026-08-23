@@ -1,6 +1,80 @@
-/backend-service/node_modules
-/backend-service/.env
-/backend-service/uploads
+# ==========================================
+# Root & Monorepo Dependencies
+# ==========================================
+node_modules/
+backend-service/node_modules/
+frontend-service/node_modules/
 
-/frontend-service/node_modules
-/frontend-service/.env.local
+# Yarn / PnP
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ==========================================
+# Environment & Secret Configurations
+# ==========================================
+.env
+.env*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+backend-service/.env
+frontend-service/.env
+frontend-service/.env.local
+frontend-service/.env.*.local
+*.pem
+
+# ==========================================
+# Backend Media / Dynamic Uploads
+# ==========================================
+backend-service/uploads/
+uploads/
+
+# ==========================================
+# Frontend (Next.js) & Build Outputs
+# ==========================================
+frontend-service/.next/
+frontend-service/out/
+backend-service/dist/
+backend-service/build/
+dist/
+build/
+.vercel
+
+# ==========================================
+# TypeScript & Build Cache
+# ==========================================
+*.tsbuildinfo
+next-env.d.ts
+frontend-service/next-env.d.ts
+
+# ==========================================
+# Testing & Code Coverage
+# ==========================================
+coverage/
+backend-service/coverage/
+frontend-service/coverage/
+
+# ==========================================
+# Logs & Debugging
+# ==========================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ==========================================
+# OS & Editor Metadata
+# ==========================================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
