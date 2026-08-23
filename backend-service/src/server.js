@@ -2,13 +2,42 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
+const rateLimit = require("express-rate-limit");
 const globalErrorHandler = require("./middlewares/errorHandler");
 const AppError = require("./utils/AppError");
 const apiRouter = require("./routes");
 const path = require("path");
-const { startSyncWorker } = require("./services/syncService");
 
 const app = express();
+
+// Trust reverse proxy (Required for Vercel, Render, or load balancers)
+app.set("trust proxy", 1);
+
+// General API Rate Limiter (100 requests per 15 minutes per IP)
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: 429,
+    message:
+      "Too many requests from this IP, please try again after 15 minutes.",
+  },
+});
+
+// Stricter Rate Limiter for Auth Routes (10 requests per 15 minutes)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: 429,
+    message:
+      "Too many authentication attempts, please try again after 15 minutes.",
+  },
+});
 
 // Security HTTP Headers
 app.use(helmet());
@@ -24,8 +53,11 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, server-side fetch)
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app")
+      ) {
         callback(null, true);
       } else {
         callback(new Error("Blocked by CORS policy"));
@@ -46,7 +78,7 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-// Health Check Endpoint
+// Health Check Endpoint (Unrestricted)
 app.get("/ping", (req, res) => {
   res.status(200).json({
     status: "success",
@@ -55,9 +87,12 @@ app.get("/ping", (req, res) => {
   });
 });
 
+// Apply general rate limiting to all API routes
+app.use("/api/v1", apiLimiter);
+
 app.use("/api/v1/sync", require("./routes/syncRoutes"));
 
-// Routes
+// Main API Routes
 app.use("/api/v1", apiRouter);
 
 // 404 Route Catch-All
