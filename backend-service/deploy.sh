@@ -23,7 +23,7 @@ if pm2 list | grep -q "backend-service"; then
   pm2 reload backend-service --update-env
 else
   echo "▶️ Starting PM2 process..."
-  pm2 start index.js --name "backend-service" -i max --env production
+  pm2 start src/index.js --name "backend-service" -i max --env production
 fi
 
 pm2 save
