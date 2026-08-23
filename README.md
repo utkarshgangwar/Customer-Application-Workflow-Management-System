@@ -7,31 +7,31 @@ An enterprise orchestration platform built to manage complex, multi-stage client
 ## 1. System Architecture
 
 ┌──────────────────────────────────────────┐
-              │          Next.js App Router UI           │
-              │   (Split-Pane Workspace, Modals, Forms)  │
-              └────────────────────┬─────────────────────┘
-                                   │ HTTP / JSON API
-                                   ▼
-              ┌──────────────────────────────────────────┐
-              │       Express.js API Gateway / Layer      │
-              │  (Auth Guards, RBAC, Domain Interceptors)│
-              └─────────┬──────────────────────┬─────────┘
-                        │                      │
-     ┌──────────────────▼────┐        ┌────────▼────────────────┐
-     │ Controllers / Handlers│        │   OpenAPI / Swagger UI  │
-     └──────────┬────────────┘        └─────────────────────────┘
-                │ Direct Service/Model Calls
-                ▼
+│          Next.js App Router UI           │
+│   (Split-Pane Workspace, Modals, Forms)  │
+└────────────────────┬─────────────────────┘
+                     │ HTTP / JSON API
+                     ▼
+┌──────────────────────────────────────────┐
+│       Express.js API Gateway / Layer      │
+│  (Auth Guards, RBAC, Domain Interceptors) │
+└─────────┬─────────────────────────────────┘
+          │                     
+┌─────────▼─────────────┐        
+│ Controllers / Handlers│        
+└──────────┬────────────┘     
+           │ Direct Service/Model Calls
+           ▼
 ┌────────────────────────────────────────────────────────────────────┐
 │                       Mongoose Data Layer                          │
 │   (State Machine Hooks, Aggregation Pipelines, Static Methods)     │
 └─────────────────────────────────┬──────────────────────────────────┘
-│
-▼
-┌───────────────────────────┐
-│      MongoDB Database     │
-│ (ACID Transactions & Data)│
-└───────────────────────────┘
+                                  │
+                                  ▼
+                      ┌───────────────────────────┐
+                      │      MongoDB Database     │
+                      │ (ACID Transactions & Data)│
+                      └───────────────────────────┘
 
 ---
 
@@ -86,16 +86,45 @@ frontend-service/
 
 ## 4. Engineering Decisions & Rationale
 
-| Architectural Decision | Why It Was Done | Alternative Avoided |
-| :--- | :--- | :--- |
-| **MongoDB Aggregation Pipelines for Workload Metrics** | Replaced iterative $N+1$ database queries inside loops with a single parallel aggregation (`$group` / `$cond`). Reduced response latency from ~800ms to <30ms under load. | Iterating over users and running 4 `countDocuments` calls per user in JavaScript. |
-| **Workflow Domain Scoping (`teamId` linking)** | Workflows explicitly bind to an operational `Team`. Executives only see workflows and dockets pertinent to their unit, preventing accidental cross-team misallocations. | Global, unpartitioned dropdowns showing all organizational staff across all regions. |
-| **Task Completion Stage Guard** | The backend state machine rejects stage promotions if any required checklist tasks for the current stage remain uncompleted (`status !== "COMPLETED"`). | Allowing staff to skip stages without completing mandatory compliance checks. |
-| **Idempotent Stage Work-Item Provisioning** | When moving backward or re-visiting a stage, the system resets existing stage work items rather than generating duplicate duplicate tasks in the database. | Spawning redundant, orphaned duplicate tasks on every stage rollback. |
-| **Polymorphic `<GenericList<T>>` with Domain Wrappers** | Built a reusable, zebra-striped list container parameterized with generic types to handle Customers, Applications, and Workflows consistently across views. | Copy-pasting repetitive table/list HTML across three separate sub-dashboards. |
-| **Thin Routes, Fat Models & Controllers** | Kept routes strictly declarative (mapping URLs to middleware) and pushed data joins and calculations into model statics and controller methods. | Bloated route files with inline queries, making unit testing and maintenance difficult. |
-| **Automatic Multi-part File-to-Task Linkage** | Uploading an attachment automatically stores the document record, updates `workItem.attachmentId`, and triggers an audit log in one contiguous flow. | Requiring users to first upload a file in a separate screen, copy the ID, and paste it into a task. |
-EOF
+### 1. Eliminating $N+1$ Queries via MongoDB Aggregation Pipelines
+* **Problem:** Fetching staff workloads originally required fetching all users and running 4 sequential `countDocuments` queries in a JavaScript loop for each user (counting active dockets, pending tasks, team assignments, etc.). Under moderate load, this caused latency spikes of ~800ms.
+* **Decision:** Migrated the entire workload computation into a single MongoDB aggregation pipeline utilizing `$lookup`, `$group`, `$cond`, and `$facet` within a static model method (`User.findWithWorkloadStats`).
+* **Impact:** Reduced response times from ~800ms to <30ms, completely offloading heavy computation to database indexes.
+
+---
+
+### 2. Workflow Domain Scoping & Organizational Isolation
+* **Problem:** In enterprise petition management, caseworkers handle distinct country units (e.g., Canada PR, UK Work Visa, Germany Blue Card). A global dropdown allowed accidental cross-assignment of dockets to unqualified staff in unrelated divisions.
+* **Decision:** Bound workflows directly to dedicated operational teams (`teamId`). When a manager selects a workflow, the API strictly scopes available assignees to staff belonging to that unit, while system administrators retain universal oversight (`isUniversal`).
+* **Impact:** Enforces clean separation of concerns and prevents cross-domain assignment errors.
+
+---
+
+### 3. Task-Gated Stage Transitions (Deterministic State Machine)
+* **Problem:** Caseworkers could prematurely advance application stages without finishing mandatory prerequisite steps, leading to compliance failures and missing client records.
+* **Decision:** Implemented a strict pre-transition check in `applicationController.updateApplicationStage`. The engine queries active stage work items and throws a `400 Bad Request` if any task remains uncompleted (`status !== "COMPLETED"`).
+* **Impact:** Guarantees business compliance before an application can advance to subsequent phases.
+
+---
+
+### 4. Idempotent Stage Work-Item Provisioning
+* **Problem:** When an application transitions backward due to re-work or client edits, re-entering a previous stage risked spawning duplicate tasks and inflating task metrics.
+* **Decision:** Stage work-item generation uses idempotent provisioning: the engine checks if work items for that stage already exist. If found, it resets their status rather than inserting duplicate documents.
+* **Impact:** Eliminates orphaned database records and ensures metrics remain accurate during stage rollbacks.
+
+---
+
+### 5. Multi-part File Attachment with Real-Time Mutation Linking
+* **Problem:** Disconnected file upload workflows required staff to upload files to a storage page, copy file IDs, and manually link them back to task items.
+* **Decision:** Streamlined document attachment directly within the `WorkItemList` UI. Uploading a file creates the `Document` record, patches `workItem.attachmentId`, marks the task as `COMPLETED`, and logs an immutable `Activity` audit trail in one contiguous flow.
+* **Impact:** Reduces casework overhead to a single click while automatically maintaining an audit trail.
+
+---
+
+### 6. Polymorphic `<GenericList<T>>` with High-Density Layout
+* **Problem:** Managing separate list rendering, loading skeletons, selection indicators, and zebra striping across Customers, Applications, and Workflows led to UI divergence and duplicated state logic.
+* **Decision:** Built a type-safe `<GenericList<T>>` component with generic props (`renderItem`, `getId`, `onSelect`, `zebra`) and wrapped it in lightweight domain components.
+* **Impact:** Standardized keyboard navigation, zebra styling, and active selection state across all platform dashboards with zero code duplication.
 
 ---
 
@@ -111,16 +140,22 @@ cd backend-service
 npm install
 cp .env.example .env
 npm run dev
+```
 
 ### Database Seeding
 To populate default teams, workflows, users, and dockets:
 node src/seeds/seed.js
+```bash
+npm run seed
+```
 
 ### Frontend Setup
+```bash
 cd frontend-service
 npm install
 cp .env.example .env.local
 npm run dev
+```
 
 ### 6. Testing
 
