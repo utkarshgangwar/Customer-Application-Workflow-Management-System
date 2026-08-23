@@ -5,9 +5,9 @@ BRANCH="${1:-main}"
 
 echo "🚀 Deploying backend branch: $BRANCH..."
 
-git fetch origin "$BRANCH"
-git checkout "$BRANCH"
-git pull origin "$BRANCH"
+# git fetch origin "$BRANCH"
+# git checkout "$BRANCH"
+# git pull origin "$BRANCH"
 
 npm install --omit=dev
 
