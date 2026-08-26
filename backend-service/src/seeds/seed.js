@@ -38,11 +38,11 @@ const seedDatabase = async () => {
 
     // 1. Seed Teams
     const teams = await Team.create([
-      { name: "Canada PR Processing Unit" }, // teams[0]
-      { name: "Australia SkillSelect Team" }, // teams[1]
-      { name: "Student Visa Admissions Cell" }, // teams[2]
-      { name: "Corporate Global Mobility Desk" }, // teams[3]
-      { name: "Client Grievance & Escalations" }, // teams[4]
+      { name: "North America Immigration Processing" }, // teams[0]
+      { name: "Oceania Skilled Migration Desk" }, // teams[1]
+      { name: "European Education & Admissions" }, // teams[2]
+      { name: "Corporate Global Mobility Unit" }, // teams[3]
+      { name: "Escalations & Dispute Resolution" }, // teams[4]
     ]);
 
     // 2. Seed Users (Admins, Managers, Executives)
@@ -50,14 +50,14 @@ const seedDatabase = async () => {
       // Admins (teamId: null -> Global oversight)
       {
         name: "Rajesh Sharma",
-        email: "admin.rajesh@yaxis.com",
+        email: "admin.rajesh@workflowops.io",
         password: "Password@123",
         role: "admin",
         teamId: null,
       },
       {
         name: "Deepa Krishnan",
-        email: "admin.deepa@yaxis.com",
+        email: "admin.deepa@workflowops.io",
         password: "Password@123",
         role: "admin",
         teamId: null,
@@ -65,28 +65,28 @@ const seedDatabase = async () => {
       // Managers (Scoped to respective department teams)
       {
         name: "Priyanka Verma",
-        email: "manager.priyanka@yaxis.com",
+        email: "manager.priyanka@workflowops.io",
         password: "Password@123",
         role: "manager",
-        teamId: teams[0]._id, // Canada PR
+        teamId: teams[0]._id, // North America
       },
       {
         name: "Amitabh Sen",
-        email: "manager.amitabh@yaxis.com",
+        email: "manager.amitabh@workflowops.io",
         password: "Password@123",
         role: "manager",
-        teamId: teams[1]._id, // Australia
+        teamId: teams[1]._id, // Oceania
       },
       {
         name: "Rohit Kulkarni",
-        email: "manager.rohit@yaxis.com",
+        email: "manager.rohit@workflowops.io",
         password: "Password@123",
         role: "manager",
-        teamId: teams[2]._id, // Student Visas
+        teamId: teams[2]._id, // Europe
       },
       {
         name: "Shweta Mukherjee",
-        email: "manager.shweta@yaxis.com",
+        email: "manager.shweta@workflowops.io",
         password: "Password@123",
         role: "manager",
         teamId: teams[3]._id, // Corporate Mobility
@@ -94,49 +94,49 @@ const seedDatabase = async () => {
       // Executives (Scoped to respective department teams)
       {
         name: "Vikram Joshi",
-        email: "executive.vikram@yaxis.com",
+        email: "executive.vikram@workflowops.io",
         password: "Password@123",
         role: "executive",
-        teamId: teams[0]._id, // Canada PR
+        teamId: teams[0]._id, // North America
       },
       {
         name: "Ananya Iyer",
-        email: "executive.ananya@yaxis.com",
+        email: "executive.ananya@workflowops.io",
         password: "Password@123",
         role: "executive",
-        teamId: teams[0]._id, // Canada PR
+        teamId: teams[0]._id, // North America
       },
       {
         name: "Utkarsh Gangwar",
-        email: "utkarsh@test.com",
+        email: "utkarsh@workflowops.io",
         password: "Password@123",
         role: "executive",
-        teamId: teams[0]._id, // Canada PR
+        teamId: teams[0]._id, // North America
       },
       {
         name: "Suresh Menon",
-        email: "executive.suresh@yaxis.com",
+        email: "executive.suresh@workflowops.io",
         password: "Password@123",
         role: "executive",
-        teamId: teams[1]._id, // Australia
+        teamId: teams[1]._id, // Oceania
       },
       {
         name: "Pooja Hegde",
-        email: "executive.pooja@yaxis.com",
+        email: "executive.pooja@workflowops.io",
         password: "Password@123",
         role: "executive",
-        teamId: teams[2]._id, // Student Visas
+        teamId: teams[2]._id, // Europe
       },
       {
         name: "Nikhil Yadav",
-        email: "nikhil@test.com",
+        email: "nikhil@workflowops.io",
         password: "Password@123",
         role: "executive",
-        teamId: teams[2]._id, // Student Visas
+        teamId: teams[2]._id, // Europe
       },
       {
         name: "Farhan Akhtar",
-        email: "executive.farhan@yaxis.com",
+        email: "executive.farhan@workflowops.io",
         password: "Password@123",
         role: "executive",
         teamId: teams[3]._id, // Corporate Mobility
@@ -144,9 +144,9 @@ const seedDatabase = async () => {
     ]);
 
     const adminRajesh = users[0];
-    const managerCanada = users[2];
-    const managerAus = users[3];
-    const managerEdu = users[4];
+    const managerNorthAmerica = users[2];
+    const managerOceania = users[3];
+    const managerEurope = users[4];
     const managerCorp = users[5];
 
     const execVikram = users[6];
@@ -159,12 +159,12 @@ const seedDatabase = async () => {
 
     // 3. Seed Workflows with explicit teamId and isUniversal flag
     const workflows = await Workflow.create([
-      // Workflow 1: Canada Express Entry PR -> Linked to Canada PR Processing Unit
+      // Workflow 1: Skilled Worker PR -> Linked to North America Immigration Processing
       {
-        name: "Canada Express Entry PR Process",
-        code: "CAN_EXPRESS_ENTRY_PR",
+        name: "Federal Skilled Worker PR Program",
+        code: "NA_SKILLED_PR",
         description:
-          "Comprehensive federal skilled worker immigration pipeline for Canada.",
+          "Comprehensive skilled worker immigration pipeline for permanent residency applications.",
         teamId: teams[0]._id,
         isUniversal: false,
         active: true,
@@ -176,11 +176,11 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "ELIGIBILITY_CHECK",
-                title: "Verify 67-point FSWP score eligibility",
+                title: "Verify point-based score eligibility matrix",
               },
               {
                 workType: "PAYMENT_CONFIRMATION",
-                title: "Verify sign-up fee invoice",
+                title: "Verify initial onboarding invoice",
               },
             ],
             allowedTransitions: ["DOCUMENTATION_STAGE", "CANCELLED"],
@@ -191,15 +191,15 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "ECA_VERIFICATION",
-                title: "Submit WES Education Credential Assessment",
+                title: "Audit Education Credential Assessment reports",
               },
               {
                 workType: "IELTS_VERIFICATION",
-                title: "Verify IELTS TRF scorecard (CLB 9+ target)",
+                title: "Validate language proficiency scorecard",
               },
               {
                 workType: "EXPERIENCE_LETTERS",
-                title: "Audit NOC reference letters",
+                title: "Audit primary occupation reference letters",
               },
             ],
             allowedTransitions: [
@@ -214,7 +214,7 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "FOLLOW_UP",
-                title: "Request revised salary slips and bank statements",
+                title: "Request updated financial statements and affidavits",
               },
             ],
             allowedTransitions: [
@@ -229,11 +229,12 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "PROFILE_SUBMISSION",
-                title: "Submit Express Entry profile in IRCC portal",
+                title: "Submit formal profile in government registry",
               },
               {
                 workType: "PCC_MEDICALS",
-                title: "Upload Police Clearance Certificate and e-Medical",
+                title:
+                  "Upload Police Clearance Certificate and medical diagnostics",
               },
             ],
             allowedTransitions: ["UNDER_REVIEW", "CANCELLED"],
@@ -245,7 +246,7 @@ const seedDatabase = async () => {
               {
                 workType: "IRCC_TRACKING",
                 title:
-                  "Track Biometrics Collection Letter and Background Check",
+                  "Track Biometrics submission and statutory background audit",
               },
             ],
             allowedTransitions: ["COMPLETED", "CANCELLED"],
@@ -256,8 +257,7 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "COPR_DISPATCH",
-                title:
-                  "Deliver Confirmation of Permanent Residence (COPR) packet",
+                title: "Deliver Confirmation of Permanent Residence docket",
               },
             ],
             allowedTransitions: [],
@@ -265,12 +265,12 @@ const seedDatabase = async () => {
         ],
       },
 
-      // Workflow 2: Australia Subclass 189 -> Linked to Australia SkillSelect Team
+      // Workflow 2: Points-Tested Independent Migration -> Linked to Oceania Skilled Migration Desk
       {
-        name: "Australia Skilled Independent 189",
-        code: "AUS_189_SKILLED",
+        name: "Skilled Independent Migration 189",
+        code: "OC_189_SKILLED",
         description:
-          "Points-tested permanent visa processing pipeline via Australian Department of Home Affairs.",
+          "Points-tested independent permanent visa processing pipeline.",
         teamId: teams[1]._id,
         isUniversal: false,
         active: true,
@@ -282,11 +282,11 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "ASSESSING_BODY_FILING",
-                title: "ACS / VETASSESS Document Compilation",
+                title: "Compile professional body skills dossier",
               },
               {
                 workType: "PTE_VERIFICATION",
-                title: "Verify PTE Academic Score (Superior English Target)",
+                title: "Verify PTE / Academic English credentials",
               },
             ],
             allowedTransitions: ["EOI_LODGEMENT", "CANCELLED"],
@@ -297,11 +297,11 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "SKILLSELECT_PROFILE",
-                title: "Create and Lodge SkillSelect EOI",
+                title: "Create and lodge formal Expression of Interest",
               },
               {
                 workType: "STATE_SPONSOR_OPT",
-                title: "Review State Nomination Matrix",
+                title: "Evaluate territorial sponsorship eligibility matrix",
               },
             ],
             allowedTransitions: [
@@ -316,11 +316,11 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "IMMIACCOUNT_SUBMISSION",
-                title: "Lodge Form 1276 on ImmiAccount",
+                title: "Lodge statutory electronic visa application",
               },
               {
                 workType: "NATIONAL_POLICE_CHECK",
-                title: "Upload AFP & Indian PCC",
+                title: "Upload national and state background clearances",
               },
             ],
             allowedTransitions: ["COMPLETED", "CANCELLED"],
@@ -331,7 +331,7 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "VISA_GRANT_AUDIT",
-                title: "Verify Visa Grant Notice and Initial Entry Date",
+                title: "Audit formal Visa Grant notification and entry dates",
               },
             ],
             allowedTransitions: [],
@@ -339,12 +339,12 @@ const seedDatabase = async () => {
         ],
       },
 
-      // Workflow 3: UK Admissions -> Linked to Student Visa Admissions Cell
+      // Workflow 3: Higher Education & Student Visa -> Linked to European Education & Admissions
       {
-        name: "UK University Admission & Student Visa",
-        code: "UK_STUDENT_CAS_VISA",
+        name: "University Admission & Study Visa Pipeline",
+        code: "EU_STUDENT_ADMISSIONS",
         description:
-          "Higher education university selection, unconditional offer, CAS, and UKVI filing.",
+          "Higher education course enrollment, offer validation, and student visa filing.",
         teamId: teams[2]._id,
         isUniversal: false,
         active: true,
@@ -356,11 +356,11 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "SOP_DRAFTING",
-                title: "Statement of Purpose Review and Finalization",
+                title: "Statement of Purpose review and finalization",
               },
               {
                 workType: "PORTAL_LODGEMENT",
-                title: "Submit applications to Russell Group Universities",
+                title: "Lodge admission dossiers across partner universities",
               },
             ],
             allowedTransitions: ["CAS_STAGE", "CANCELLED"],
@@ -371,11 +371,11 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "FEE_DEPOSIT",
-                title: "Verify Tuition Deposit Wire Transfer",
+                title: "Confirm tuition deposit wire transfer receipt",
               },
               {
                 workType: "FINANCIAL_AUDIT",
-                title: "Audit 28-day consecutive bank balance maintenance",
+                title: "Audit maintenance of required 28-day funds statement",
               },
             ],
             allowedTransitions: [
@@ -390,11 +390,11 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "IHS_PAYMENT",
-                title: "Pay Immigration Health Surcharge and Visa Fee",
+                title: "Process healthcare surcharge and consular visa fees",
               },
               {
                 workType: "VFS_BIOMETRICS",
-                title: "Schedule VFS Biometrics Appointment",
+                title: "Schedule biometric enrollment appointment",
               },
             ],
             allowedTransitions: ["COMPLETED", "CANCELLED"],
@@ -405,7 +405,8 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "BRP_LETTER",
-                title: "Issue UKVI Decision Letter & BRP Collection Guidance",
+                title:
+                  "Deliver decision letter and resident permit collection brief",
               },
             ],
             allowedTransitions: [],
@@ -413,12 +414,12 @@ const seedDatabase = async () => {
         ],
       },
 
-      // Workflow 4: US Corporate L-1 -> Linked to Corporate Global Mobility Desk
+      // Workflow 4: Corporate Intra-Company Mobility -> Linked to Corporate Global Mobility Unit
       {
-        name: "US Corporate Intra-Company Transfer (L-1)",
-        code: "US_CORP_L1_TRANSFER",
+        name: "Executive Intra-Company Transfer (L-1)",
+        code: "CORP_EXEC_TRANSFER",
         description:
-          "Enterprise multi-national managerial and specialized knowledge transfer petition pipeline.",
+          "Enterprise multi-national executive and specialized talent relocation pipeline.",
         teamId: teams[3]._id,
         isUniversal: false,
         active: true,
@@ -430,12 +431,12 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "I129_PREPARATION",
-                title: "Draft Form I-129 and L Supplement",
+                title:
+                  "Draft corporate transfer petition & specialized supplement",
               },
               {
                 workType: "ORG_CHART_VERIFICATION",
-                title:
-                  "Audit foreign and domestic entity organizational charts",
+                title: "Audit parent and subsidiary corporate org charts",
               },
             ],
             allowedTransitions: ["USCIS_FILING", "CANCELLED"],
@@ -446,11 +447,11 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "PREMIUM_PROCESSING",
-                title: "Lodge Form I-907 Premium Processing with USCIS",
+                title: "Lodge expedited processing petition with authorities",
               },
               {
                 workType: "FEE_RECEIPTS",
-                title: "Record I-797C Notice of Action receipts",
+                title: "Archive formal receipt notices and docket ID",
               },
             ],
             allowedTransitions: ["CONSULAR_INTERVIEW", "CANCELLED"],
@@ -461,11 +462,12 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "DS160_FILING",
-                title: "Complete Form DS-160 and MRV Fee Payment",
+                title:
+                  "Complete consular visa applications and schedule interview",
               },
               {
                 workType: "MOCK_INTERVIEW",
-                title: "Conduct consular interview preparation briefing",
+                title: "Conduct consular briefing and documentation review",
               },
             ],
             allowedTransitions: ["COMPLETED", "CANCELLED"],
@@ -476,7 +478,8 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "I94_VERIFICATION",
-                title: "Verify stamped visa foil and entry compliance binder",
+                title:
+                  "Validate visa stamp, entry validity, and compliance record",
               },
             ],
             allowedTransitions: [],
@@ -484,12 +487,12 @@ const seedDatabase = async () => {
         ],
       },
 
-      // Workflow 5: Client Grievance -> Universal (teamId: null, isUniversal: true)
+      // Workflow 5: Grievance & Dispute Resolution -> Universal (teamId: null, isUniversal: true)
       {
-        name: "Client Grievance & Refund Review",
-        code: "CLIENT_REFUND_ESCALATION",
+        name: "Account Dispute & Escalation Review",
+        code: "DISPUTE_ESCALATION_OPS",
         description:
-          "Formal legal and accounts escalation workflow for resolving dispute dockets across any team.",
+          "Formal dispute resolution and operational escalation workflow across teams.",
         teamId: null,
         isUniversal: true,
         active: true,
@@ -501,12 +504,12 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "AGREEMENT_AUDIT",
-                title: "Review signed client service agreement terms",
+                title: "Audit service agreement clauses and SLA terms",
               },
               {
                 workType: "SERVICE_LOG_REVIEW",
                 title:
-                  "Extract executive communication timeline and audit trail",
+                  "Review communication audit trail and ticket log history",
               },
             ],
             allowedTransitions: ["LEGAL_ACCOUNTS_REVIEW", "CANCELLED"],
@@ -517,12 +520,11 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "DISCOUNT_ASSESSMENT",
-                title:
-                  "Calculate allowable pro-rata refund or credit credit note",
+                title: "Determine pro-rata settlement credit note calculation",
               },
               {
                 workType: "DIRECTOR_APPROVAL",
-                title: "Acquire financial clearance sign-off",
+                title: "Secure financial governance sign-off",
               },
             ],
             allowedTransitions: ["COMPLETED", "INTAKE_AND_TRIAGE", "CANCELLED"],
@@ -533,8 +535,7 @@ const seedDatabase = async () => {
             workRequired: [
               {
                 workType: "SETTLEMENT_PAYOUT",
-                title:
-                  "Dispatch settlement letter and NEFT transaction receipt",
+                title: "Dispatch settlement letter and transaction reference",
               },
             ],
             allowedTransitions: [],
@@ -543,13 +544,14 @@ const seedDatabase = async () => {
       },
     ]);
 
-    const [canadaWf, ausWf, ukWf, usCorpWf, grievanceWf] = workflows;
+    const [northAmericaWf, oceaniaWf, europeWf, corporateWf, disputeWf] =
+      workflows;
 
     // 4. Seed Diverse Customers
     const customers = await Customer.create([
       {
         name: "Rohan Deshmukh",
-        email: "rohan.deshmukh@gmail.com",
+        email: "rohan.deshmukh@example.com",
         mobile: { code: "+91", num: "9876543210" },
         age: 29,
         gender: "male",
@@ -562,7 +564,7 @@ const seedDatabase = async () => {
       },
       {
         name: "Kavita Nair",
-        email: "kavita.nair@outlook.com",
+        email: "kavita.nair@example.com",
         mobile: { code: "+91", num: "9823011223" },
         age: 31,
         gender: "female",
@@ -575,7 +577,7 @@ const seedDatabase = async () => {
       },
       {
         name: "Arjun Patel",
-        email: "arjun.patel@yahoo.com",
+        email: "arjun.patel@example.com",
         mobile: { code: "+91", num: "9988776655" },
         age: 27,
         gender: "male",
@@ -588,7 +590,7 @@ const seedDatabase = async () => {
       },
       {
         name: "Meera Sengupta",
-        email: "meera.sengupta@gmail.com",
+        email: "meera.sengupta@example.com",
         mobile: { code: "+91", num: "9830012345" },
         age: 23,
         gender: "female",
@@ -601,7 +603,7 @@ const seedDatabase = async () => {
       },
       {
         name: "Tariq Mansoori",
-        email: "tariq.mansoori@techcorp.com",
+        email: "tariq.mansoori@globaltech.io",
         mobile: { code: "+91", num: "9711009988" },
         age: 38,
         gender: "male",
@@ -614,7 +616,7 @@ const seedDatabase = async () => {
       },
       {
         name: "Sunita Choudhury",
-        email: "sunita.choudhury@gmail.com",
+        email: "sunita.choudhury@example.com",
         mobile: { code: "+91", num: "9435012389" },
         age: 34,
         gender: "female",
@@ -629,59 +631,59 @@ const seedDatabase = async () => {
 
     // 5. Seed Customer Applications across distinct workflows
     const applications = await CustomerApplication.create([
-      // Docket 1: Canada PR Active
+      // Docket 1: North America PR Active
       {
         customerId: customers[0]._id,
-        workflowId: canadaWf._id,
-        title: "Canada PR - Express Entry FSWP (Primary Dossier)",
+        workflowId: northAmericaWf._id,
+        title: "Federal Skilled Worker PR Dossier (Express Track)",
         priority: 2, // High
         currentStage: "DOCUMENTATION_STAGE",
         status: "ACTIVE",
         assignedTo: execVikram._id,
-        managerId: managerCanada._id,
+        managerId: managerNorthAmerica._id,
         version: 1,
       },
-      // Docket 2: Canada OINP Tech Draw
+      // Docket 2: Provincial Tech Program
       {
         customerId: customers[1]._id,
-        workflowId: canadaWf._id,
-        title: "Canada PR - OINP Tech Draw Application",
+        workflowId: northAmericaWf._id,
+        title: "Provincial Tech Nomination Dossier",
         priority: 3, // Urgent
         currentStage: "NEW_REGISTRATION",
         status: "ACTIVE",
         assignedTo: execAnanya._id,
-        managerId: managerCanada._id,
+        managerId: managerNorthAmerica._id,
         version: 1,
       },
-      // Docket 3: Australia 189 Migration
+      // Docket 3: Independent Migration
       {
         customerId: customers[2]._id,
-        workflowId: ausWf._id,
-        title: "Australia Subclass 189 (Software Engineer ANZSCO 261313)",
+        workflowId: oceaniaWf._id,
+        title: "Skilled Independent 189 Migration Dossier (Software Engineer)",
         priority: 1, // Normal
         currentStage: "SKILLS_ASSESSMENT",
         status: "ACTIVE",
         assignedTo: execSuresh._id,
-        managerId: managerAus._id,
+        managerId: managerOceania._id,
         version: 1,
       },
-      // Docket 4: UK Student Visa
+      // Docket 4: Graduate Admissions
       {
         customerId: customers[3]._id,
-        workflowId: ukWf._id,
-        title: "UK Admissions - MSc Data Science (University of Manchester)",
+        workflowId: europeWf._id,
+        title: "University Admissions & Study Visa - MSc Data Science",
         priority: 2, // High
         currentStage: "UNIVERSITY_APPLICATIONS",
         status: "ACTIVE",
         assignedTo: execPooja._id,
-        managerId: managerEdu._id,
+        managerId: managerEurope._id,
         version: 1,
       },
-      // Docket 5: US Corporate L-1 Mobility
+      // Docket 5: Corporate Intra-Company Transfer
       {
         customerId: customers[4]._id,
-        workflowId: usCorpWf._id,
-        title: "US Intra-Company Transfer L-1A Executive Petition",
+        workflowId: corporateWf._id,
+        title: "Corporate Executive Intra-Company Transfer Petition",
         priority: 3, // Urgent
         currentStage: "PETITION_DRAFTING",
         status: "ACTIVE",
@@ -689,29 +691,29 @@ const seedDatabase = async () => {
         managerId: managerCorp._id,
         version: 1,
       },
-      // Docket 6: Client Dispute & Refund Review
+      // Docket 6: Client Dispute & Escalation
       {
         customerId: customers[5]._id,
-        workflowId: grievanceWf._id,
-        title: "Formal Escalation & Retainer Refund Docket #8842",
+        workflowId: disputeWf._id,
+        title: "Formal Retainer Settlement & Escalation Docket #8842",
         priority: 2, // High
         currentStage: "INTAKE_AND_TRIAGE",
         status: "ON_HOLD",
         assignedTo: execVikram._id,
-        managerId: managerCanada._id,
+        managerId: managerNorthAmerica._id,
         version: 1,
       },
     ]);
 
-    // 6. Seed Work Items for Docket 1 (Canada PR)
+    // 6. Seed Work Items for Docket 1 (North America PR)
     const workItemsApp1 = await WorkItem.create([
       {
         applicationId: applications[0]._id,
         stageName: "DOCUMENTATION_STAGE",
         stageOrderNumber: 2,
-        title: "Submit WES Education Credential Assessment",
+        title: "Audit Education Credential Assessment reports",
         description:
-          "Verify transcript receipt and reference number matching with IRCC checklist.",
+          "Verify transcript receipt and reference number matching with checklist requirements.",
         assignedTo: execVikram._id,
         status: "COMPLETED",
         completedAt: new Date(),
@@ -720,9 +722,9 @@ const seedDatabase = async () => {
         applicationId: applications[0]._id,
         stageName: "DOCUMENTATION_STAGE",
         stageOrderNumber: 2,
-        title: "Verify IELTS TRF scorecard (CLB 9+ target)",
+        title: "Validate language proficiency scorecard",
         description:
-          "Ensure minimum Band 8 in Listening, Band 7 in Reading, Writing, Speaking.",
+          "Ensure test score satisfies language benchmark standards.",
         assignedTo: execVikram._id,
         status: "PENDING",
       },
@@ -730,23 +732,23 @@ const seedDatabase = async () => {
         applicationId: applications[0]._id,
         stageName: "DOCUMENTATION_STAGE",
         stageOrderNumber: 2,
-        title: "Audit NOC reference letters",
+        title: "Audit primary occupation reference letters",
         description:
-          "Verify roles and responsibilities match NOC 21232 guidelines.",
+          "Verify organizational roles and responsibilities match classification codes.",
         assignedTo: execVikram._id,
         status: "PENDING",
       },
     ]);
 
-    // Seed Work Items for Docket 4 (UK Student Admission)
+    // Seed Work Items for Docket 4 (Graduate Admissions)
     await WorkItem.create([
       {
         applicationId: applications[3]._id,
         stageName: "UNIVERSITY_APPLICATIONS",
         stageOrderNumber: 1,
-        title: "Statement of Purpose Review and Finalization",
+        title: "Statement of Purpose review and finalization",
         description:
-          "Incorporate Manchester faculty course requirements and draft edits.",
+          "Incorporate university department course prerequisites and statement revisions.",
         assignedTo: execPooja._id,
         status: "COMPLETED",
         completedAt: new Date(),
@@ -755,9 +757,9 @@ const seedDatabase = async () => {
         applicationId: applications[3]._id,
         stageName: "UNIVERSITY_APPLICATIONS",
         stageOrderNumber: 1,
-        title: "Submit applications to Russell Group Universities",
+        title: "Lodge admission dossiers across partner universities",
         description:
-          "Lodge direct admission applications via Manchester, Edinburgh & Warwick portals.",
+          "Lodge direct admission applications via university portals.",
         assignedTo: execPooja._id,
         status: "PENDING",
       },
@@ -767,14 +769,15 @@ const seedDatabase = async () => {
     await Activity.create([
       {
         applicationId: applications[0]._id,
-        performedBy: managerCanada._id,
+        performedBy: managerNorthAmerica._id,
         actionType: "APPLICATION_CREATED",
-        message: "Application registered for Canada Express Entry PR.",
+        message:
+          "Application registered for Federal Skilled Worker PR Program.",
         metadata: { initialStage: "NEW_REGISTRATION" },
       },
       {
         applicationId: applications[0]._id,
-        performedBy: managerCanada._id,
+        performedBy: managerNorthAmerica._id,
         actionType: "ASSIGNED",
         message: "Assigned application to Executive Vikram Joshi.",
         metadata: { assignedTo: execVikram._id },
@@ -784,7 +787,7 @@ const seedDatabase = async () => {
         performedBy: execVikram._id,
         actionType: "STAGE_UPDATED",
         message:
-          "Stage moved from NEW_REGISTRATION to DOCUMENTATION_STAGE. Remarks: Client signed service agreement and submitted initial fees.",
+          "Stage moved from NEW_REGISTRATION to DOCUMENTATION_STAGE. Remarks: Customer verified initial agreement terms.",
         metadata: {
           previousStage: "NEW_REGISTRATION",
           newStage: "DOCUMENTATION_STAGE",
@@ -795,15 +798,15 @@ const seedDatabase = async () => {
         performedBy: execVikram._id,
         actionType: "WORK_ITEM_COMPLETED",
         message:
-          "Completed work item: Submit WES Education Credential Assessment.",
+          "Completed work item: Audit Education Credential Assessment reports.",
         metadata: { workItemId: workItemsApp1[0]._id },
       },
       {
         applicationId: applications[3]._id,
-        performedBy: managerEdu._id,
+        performedBy: managerEurope._id,
         actionType: "APPLICATION_CREATED",
         message:
-          "Application registered for UK University Admission & Student Visa.",
+          "Application registered for University Admission & Study Visa Pipeline.",
         metadata: { initialStage: "UNIVERSITY_APPLICATIONS" },
       },
     ]);
@@ -811,42 +814,46 @@ const seedDatabase = async () => {
     console.log("✅ Seeding completed successfully!");
     console.log("\n==================== TEST CREDENTIALS ====================");
     console.log("👑 Admins (Unrestricted Global Access):");
-    console.log("   • admin.rajesh@yaxis.com    | Password@123 (Head of Ops)");
     console.log(
-      "   • admin.deepa@yaxis.com     | Password@123 (Compliance Lead)",
+      "   • admin.rajesh@workflowops.io    | Password@123 (Head of Ops)",
+    );
+    console.log(
+      "   • admin.deepa@workflowops.io     | Password@123 (Compliance Lead)",
     );
     console.log("\n👔 Managers:");
-    console.log("   • manager.priyanka@yaxis.com| Password@123 (Canada Team)");
     console.log(
-      "   • manager.amitabh@yaxis.com | Password@123 (Australia Team)",
+      "   • manager.priyanka@workflowops.io| Password@123 (North America Team)",
     );
     console.log(
-      "   • manager.rohit@yaxis.com   | Password@123 (Admissions Cell)",
+      "   • manager.amitabh@workflowops.io | Password@123 (Oceania Team)",
     );
     console.log(
-      "   • manager.shweta@yaxis.com  | Password@123 (Corporate Mobility)",
+      "   • manager.rohit@workflowops.io   | Password@123 (Europe Team)",
+    );
+    console.log(
+      "   • manager.shweta@workflowops.io  | Password@123 (Corporate Mobility)",
     );
     console.log("\n💼 Executives (Domain Grouped):");
     console.log(
-      "   • executive.vikram@yaxis.com| Password@123 (Canada PR Exec)",
+      "   • executive.vikram@workflowops.io| Password@123 (North America Exec)",
     );
     console.log(
-      "   • executive.ananya@yaxis.com| Password@123 (Canada PR Exec)",
+      "   • executive.ananya@workflowops.io| Password@123 (North America Exec)",
     );
     console.log(
-      "   • utkarsh@test.com          | Password@123 (Canada PR Exec)",
+      "   • utkarsh@workflowops.io         | Password@123 (North America Exec)",
     );
     console.log(
-      "   • executive.suresh@yaxis.com| Password@123 (Australia Exec)",
+      "   • executive.suresh@workflowops.io| Password@123 (Oceania Exec)",
     );
     console.log(
-      "   • executive.pooja@yaxis.com | Password@123 (Student Visa Exec)",
+      "   • executive.pooja@workflowops.io | Password@123 (Europe Exec)",
     );
     console.log(
-      "   • nikhil@test.com           | Password@123 (Student Visa Exec)",
+      "   • nikhil@workflowops.io          | Password@123 (Europe Exec)",
     );
     console.log(
-      "   • executive.farhan@yaxis.com| Password@123 (Corporate L-1 Exec)",
+      "   • executive.farhan@workflowops.io| Password@123 (Corporate Exec)",
     );
     console.log("==========================================================\n");
 

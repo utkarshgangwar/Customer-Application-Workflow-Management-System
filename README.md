@@ -186,6 +186,8 @@ Caching & Performance: Introduce Redis caching for read-heavy static workflow te
 
 Monitoring & Tracing: Instrument Express routes with OpenTelemetry or Prometheus metrics to monitor API latency, external sync failure rates, and state-machine rejection errors.
 
+Rate Limiting
+
 
 ## AI and Development Tools
 Gemini: Used for generating prototype code, structuring test cases, creating standard boilerplate validation schemas, and drafting architecture documentation.
